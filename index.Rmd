@@ -5,29 +5,40 @@ output: html_document
 
 ### Introduction
 
-An introduction of the data and a description of the trends/books/items you are choosing to analyze (and why!)
+In the following assignment we will be taking a dive into Seattle Public Library's data. Specifically looking at the trends of how the library's mediums are consumer/rented by the library goers. We will compare the types of mediums consumed over a year, along with it's form and comparing these mediums with each other. 
 
 ### Summary Information
 
-Write a summary paragraph of findings that includes the 5 values calculated from your summary information R script
-
-These will likely be calculated using your DPLYR skills, answering questions such as:
-
 - What is the average number of checkouts for each item?
-- What is the month or year with the most/least checkouts for a book that you're interested in?
+The average checkout for all the items is 22.1
+- What is the year with the most checkouts for a book that you're interested in?
+For the book Madeline in Paris, the year 2017 had the most checkout
 - What is the month or year with the most/least checkouts for ebooks?
+January had the most checkouts for eBooks
 - How has the number of print book checkouts changed over time?
-
-Feel free to calculate and report values that you find relevant.
+Comparing the quantity of books checked out from January to March, we see that in January a total of 115613 books were checked out. However, in comparison to March only 13297, we see a decrease of 102316 checkouts for books
+- How many items have been checked out more than 100 times at SPL?
+There have only been 281 items that have been checkout more than 100 time at SPL
 
 ### The Dataset
 
 - Who collected/published the data?  
+The collector and publisher of the data is Seattle Public Library
+
 - What are the parameters of the data (dates, number of checkouts, kinds of books, etc.)?
+The parameters that come with this data is that this data was taken between 2017-2023. It follows a large array of material types ranging from eBooks, video disk, books, magazines, and ect. Breaking down the data of the renters checkout periods, the data chart provides us with the year it was checked out at, month and quantity of checkouts. From there we are also presented with the author/creator of the medium, a short blurb, publisher and year of publish. 
+
 - How was the data collected or generated?  
+This data was collected by library users renting items, by registering an account with the library, the library is able to accumulate information through checkouts. From there we are able to see the duration of checkouts, time of checkouts and details regarding the item itself.
+
 - Why was the data collected?  
-- What, if any, ethical questions do you need to consider when working with this data?  
+This data was collected to provide information on the material that was getting checked out. As the audience we are able to see the breakdown of when the content was checked out in terms of the year, month and how many times that month it was checked out. This data provided the information of the material including it's publication, from there we are able to see if there was any correlation to how desired the item is to the renter.
+
+- What, if any, ethical questions do you need to consider when working with this data? 
+Regarding ethical questions when working with this data is that some of the content that individuals are renting may be 18+ rating. Thus, it does feel like an invasion on privacy. However, because this data frame does not link the renters identity back to what they borrowed, they are able to keep their identity anonymous. 
+
 - What are possible limitations or problems with this data?   (at least 200 words)
+Possible limitations with this data is that some libraries carry multiple copies of the same books and there is no clarification on the quantity of the medium itself. In this case the user of the data may believe that there is a discrepancy between the checkout time. For instance if there was only one copy of item A, but there were two copies of item B, within the month that we are looking at there may be a bias because item B has the ability to be checked at a higher rate. This data also does not include if the item itself is lost. Some renters may lose the item, resulting in a higher checkout period. When individuals are looking at this data, they may think that the renter is using the content for the long of a period in reality it is gone. Also, this will decrease the quantity of times the item can be checked out or in comparison to the other items that are rented. There is also no indication that the item is taken out of the library/replaced. This information can play a big role in comparison especially when it comes to whether or not the item itself is a physical or digital good. As physical goods have a higher possibility of being lost whereas digital goods if given through links and can be easily returned.
 
 
 ### First Trends Over Time Chart
@@ -47,40 +58,48 @@ When we say "clear" or "human readable" titles and labels, that means that you s
 
 Here's an example of how to run an R script inside an RMarkdown file:
 
-``````{r, echo = FALSE, warning = FALSE, code = readLines("chart1_example.R")}
+```{r, echo = FALSE}
+library(dplyr)
+library(ggplot2)
+df.chart1 <- SPU_df %>%
+  filter(MaterialType %in% c("BOOK", "EBOOK", "AUDIOBOOK", "VIDEODISC", "MOVIE")) %>%
+  group_by(MaterialType, CheckoutMonth) %>%
+  summarize(total_checkouts = sum(Checkouts),
+            .groups = "keep")
+ggplot(df.chart1) +
+  geom_line(mapping = aes(x = CheckoutMonth, y = total_checkouts, color = MaterialType)) +
+  labs(title = "Trends of Medium Type", 
+       x = "Month of Checkout", 
+       y = "Quantity of Checkout",
+       color = "Medium Type") 
 ```
+This graph is able to show us the 
 
 ### Second Trends Over Time Chart
 
-Include a chart. Make sure to describe why you included the chart, and what patterns emerged
-
-The second chart that you will create and include will show another trend over time of your variable/topic/interest. Think carefully about what you want to communicate to your user (you may have to find relevant trends in the dataset first!). Here are some requirements to help guide your design:
-
-- Show more than one, but fewer than ~10 trends
-  - For example, two books, or 5 different mediums
-- You must have clear x and y axis labels
-- The chart needs a clear title 
-- You need a legend for your different line colors and a clear - legend title
-In your .Rmd file, make sure to describe why you included the chart, and what patterns emerged
-
-When we say "clear" or "human readable" titles and labels, that means that you should not just display the variable name.
-
-Here's an example of how to run an R script inside an RMarkdown file:
-
-``````{r, echo = FALSE, code = readLines("chart2_example.R")}
+```{r, echo = FALSE}
+ggplot(SPU_df, aes(x = factor(CheckoutMonth), fill = UsageClass)) +
+  geom_bar() +
+  labs(title = "Preference of Digital vs Physical Items in 2017",
+       x = "Month of Checkout",
+       y = "Quantity of Items Checked Out",
+       fill = "Item's Form")
 ```
+To see what individuals rent at the Seattle Public Library typically check out, we compare whether they prefer physical copy of the item or digital version. The reason why we compared this over a year in terms of months is to show what consumers prefer when they consume entertainment. As we can see from the graph, in January checkout rates are at the highest but this trend falls quickly after. But something that stays constant is the comparison between digital and physical, with physical content being consumed at a much higher rate than digital.
 
 ### Your Choice
 
-The last chart is up to you. It could be a line plot, scatter plot, histogram, bar plot, stacked bar plot, and more. Here are some requirements to help guide your design:
+```{r, echo = FALSE}
+df.chart3 <- SPU_df %>%
+  filter(MaterialType %in% c("BOOK", "EBOOK", "AUDIOBOOK", "VIDEODISC", "MOVIE"))
 
-- You must have clear x and y axis labels
-- The chart needs a clear title 
-- You need a legend for your different line colors and a clear legend title
-
-Here's an example of how to run an R script inside an RMarkdown file:
-
-``````{r, echo = FALSE, code = readLines("chart2_example.R")}
+ggplot(df.chart3, aes(x = MaterialType, fill = MaterialType)) +
+  geom_bar() +
+  labs(title = "Comparision of Entertainment Medium",
+       x = "Different Mediums",
+       y = "Quantity of Medium Consumed",
+       fill = "Types of Mediums"
+       )
 ```
-
+This graph presents what renters have chosen to borrow from the library. As we compare the types of mediums of entertainment, we see that books are the most rented items from the library, next we have videodisc, eBooks, audiobook and then movies. The reason why I chose to present this data set is because we are able to compare the popularity between these items.
 
