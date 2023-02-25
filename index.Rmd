@@ -73,7 +73,7 @@ ggplot(df.chart1) +
        y = "Quantity of Checkout",
        color = "Medium Type") 
 ```
-This graph is able to show us the 
+This graph is able to show us the consumption of mediums, specifically books, eBooks, audiobook, videodisc, and movies over the duration of 2017. From what we can see we started off in January with high consumption of all mediums, specifically videodisc and books, but an overall trend we see is a drop in the quantity of checkouts. 
 
 ### Second Trends Over Time Chart
 
